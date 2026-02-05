@@ -35,12 +35,3 @@ export interface DedupFormState {
   eventType: EventType | null;
   dedupWindow: number;     // seconds
 }
-
-// Dedup Log (중복 제거 로그)
-export interface DedupLog {
-  id: string;
-  appId: string;
-  dedupKey: string;
-  duplicateCount: number;  // 중복 제거된 이벤트 수
-  timestamp: string;       // ISO 날짜 문자열
-}

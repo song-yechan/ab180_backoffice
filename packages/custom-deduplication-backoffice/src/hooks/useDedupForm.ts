@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
-import type { AppInfo, DedupFormState, DedupSetting, DedupLog, EventType, Platform } from "@/types";
-import { DEFAULT_DEDUP_WINDOW, MOCK_DEDUP_SETTINGS, MOCK_DEDUP_LOGS, MOCK_APPS } from "@/data/mock";
+import type { AppInfo, DedupFormState, DedupSetting, EventType, Platform } from "@/types";
+import { DEFAULT_DEDUP_WINDOW, MOCK_DEDUP_SETTINGS, MOCK_APPS } from "@/data/mock";
 import { generateDedupKey } from "@/lib/dedup";
 import { toast } from "sonner";
 
@@ -8,7 +8,6 @@ import { toast } from "sonner";
 const DEFAULT_APP_ID = "12345";
 const defaultApp = MOCK_APPS[DEFAULT_APP_ID];
 const defaultAppSettings = MOCK_DEDUP_SETTINGS.filter((s) => s.appId === DEFAULT_APP_ID);
-const defaultAppLogs = MOCK_DEDUP_LOGS.filter((l) => l.appId === DEFAULT_APP_ID);
 
 export function useDedupForm() {
   // App 정보 (기본 앱으로 초기화)
@@ -16,9 +15,6 @@ export function useDedupForm() {
 
   // 현재 설정 목록 (기본 앱 설정으로 초기화)
   const [currentSettings, setCurrentSettings] = useState<DedupSetting[]>(defaultAppSettings);
-
-  // 중복 제거 로그 (기본 앱 로그로 초기화)
-  const [dedupLogs, setDedupLogs] = useState<DedupLog[]>(defaultAppLogs);
 
   // 폼 상태
   const [formState, setFormState] = useState<DedupFormState>({
@@ -34,14 +30,11 @@ export function useDedupForm() {
   const handleAppChange = useCallback((app: AppInfo | null) => {
     setAppInfo(app);
     if (app) {
-      // Mock: 해당 앱의 설정 및 로그 로드
+      // Mock: 해당 앱의 설정 로드
       const appSettings = MOCK_DEDUP_SETTINGS.filter((s) => s.appId === app.id);
-      const appLogs = MOCK_DEDUP_LOGS.filter((l) => l.appId === app.id);
       setCurrentSettings(appSettings);
-      setDedupLogs(appLogs);
     } else {
       setCurrentSettings([]);
-      setDedupLogs([]);
     }
     // 폼 초기화
     setFormState({
@@ -57,9 +50,7 @@ export function useDedupForm() {
       const appSettings = MOCK_DEDUP_SETTINGS.filter(
         (s) => s.appId === appInfo.id
       );
-      const appLogs = MOCK_DEDUP_LOGS.filter((l) => l.appId === appInfo.id);
       setCurrentSettings(appSettings);
-      setDedupLogs(appLogs);
       toast.success("설정을 새로고침했습니다.");
     }
   }, [appInfo]);
@@ -134,7 +125,6 @@ export function useDedupForm() {
   return {
     appInfo,
     currentSettings,
-    dedupLogs,
     formState,
     isApplying,
     isFormValid,

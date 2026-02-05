@@ -13,7 +13,6 @@ function App() {
   const {
     appInfo,
     currentSettings,
-    dedupLogs,
     formState,
     isApplying,
     isFormValid,
@@ -40,7 +39,6 @@ function App() {
           {/* App 검색 */}
           <AppSearchSection
             appInfo={appInfo}
-            currentSettings={currentSettings}
             onAppChange={handleAppChange}
             onRefresh={handleRefresh}
           />
@@ -50,7 +48,6 @@ function App() {
               {/* 현재 설정 */}
               <CurrentSettingsTable
                 settings={currentSettings}
-                logs={dedupLogs}
                 onDelete={handleDeleteSetting}
               />
 
