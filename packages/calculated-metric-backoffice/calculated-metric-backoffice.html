@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculated Metric Backoffice</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#FFFFFF;--fg:#0A0A0B;--muted:#F4F4F5;--muted-fg:#71717A;
+    --border:#E4E4E7;--input:#E4E4E7;--ring:#18181B;--radius:8px;
+    --primary:#18181B;--primary-fg:#FAFAFA;--accent:#F4F4F5;--accent-fg:#18181B;
+    --destructive:#EF4444;--destructive-fg:#FFFFFF;
+    --blue-50:#EFF6FF;--blue-100:#DBEAFE;--blue-200:#BFDBFE;--blue-600:#2563EB;--blue-700:#1D4ED8;--blue-800:#1E40AF;
+    --green-50:#F0FDF4;--green-100:#DCFCE7;--green-200:#BBF7D0;--green-500:#22C55E;--green-600:#16A34A;--green-700:#15803D;--green-900:#14532D;
+    --yellow-50:#FEFCE8;--yellow-100:#FEF3C7;--yellow-200:#FDE68A;--yellow-700:#A16207;--yellow-800:#854D0E;
+    --amber-50:#FFFBEB;--amber-700:#B45309;
+    --red-50:#FEF2F2;--red-100:#FEE2E2;--red-200:#FECACA;--red-600:#DC2626;--red-700:#B91C1C;--red-800:#991B1B;
+    --orange-500:#F97316;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Geist',-apple-system,BlinkMacSystemFont,sans-serif;background:#FAFAFA;color:var(--fg);line-height:1.5;-webkit-font-smoothing:antialiased;}
+  .page{max-width:920px;margin:0 auto;padding:32px 24px 80px;}
+
+  /* Header */
+  .page-header{margin-bottom:28px;}
+  .page-title{font-size:22px;font-weight:700;letter-spacing:-0.4px;margin-bottom:4px;}
+  .page-desc{font-size:14px;color:var(--muted-fg);}
+
+  .sep{height:1px;background:var(--border);margin:24px 0;}
+
+  /* Badge */
+  .badge{font-size:11px;font-weight:500;padding:2px 8px;border-radius:9999px;background:var(--muted);color:var(--muted-fg);border:1px solid var(--border);}
+  .badge-blue{background:var(--blue-100);color:var(--blue-800);border-color:var(--blue-200);}
+  .badge-green{background:var(--green-100);color:var(--green-700);border-color:var(--green-200);}
+  .badge-yellow{background:var(--yellow-100);color:var(--yellow-800);border-color:var(--yellow-200);}
+
+  /* Card */
+  .card{border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);overflow:hidden;}
+
+  /* Button */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;padding:0 16px;border-radius:var(--radius);font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;transition:all 0.15s;border:1px solid transparent;white-space:nowrap;}
+  .btn-default{background:var(--primary);color:var(--primary-fg);border-color:var(--primary);}
+  .btn-default:hover{background:#27272A;}
+  .btn-outline{background:var(--bg);color:var(--fg);border-color:var(--input);}
+  .btn-outline:hover{background:var(--accent);}
+  .btn-destructive{background:var(--destructive);color:var(--destructive-fg);border-color:var(--destructive);}
+  .btn-destructive:hover{background:#DC2626;}
+  .btn-blue{background:var(--blue-600);color:#fff;border-color:var(--blue-600);}
+  .btn-blue:hover{background:var(--blue-700);}
+  .btn-sm{height:30px;padding:0 10px;font-size:12px;}
+  .btn-lg{height:42px;padding:0 24px;font-size:14px;font-weight:600;}
+  .btn-full{width:100%;}
+  .btn-link{background:none;border:none;color:var(--blue-600);font-size:12px;font-weight:600;cursor:pointer;text-decoration:underline;padding:0;font-family:inherit;}
+  .btn-link:hover{color:var(--blue-700);}
+
+  /* Input */
+  .input{width:100%;height:36px;padding:0 12px;font-size:13px;font-family:inherit;border:1px solid var(--input);border-radius:var(--radius);background:var(--bg);color:var(--fg);outline:none;transition:border-color 0.15s,box-shadow 0.15s;}
+  .input:focus{border-color:var(--ring);box-shadow:0 0 0 2px rgba(24,24,27,0.08);}
+  .input:disabled{background:var(--muted);color:var(--muted-fg);cursor:not-allowed;}
+  .input.err{border-color:var(--destructive)!important;box-shadow:0 0 0 2px rgba(239,68,68,0.08)!important;}
+  .input.ok{border-color:var(--green-500)!important;box-shadow:0 0 0 2px rgba(34,197,94,0.08)!important;}
+  textarea.input{height:auto;padding:10px 12px;font-family:'Geist Mono',monospace;font-size:12px;line-height:1.6;resize:vertical;}
+  select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2371717A' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px;}
+
+  /* Form */
+  .form-group{margin-bottom:20px;}
+  .form-label{font-size:13px;font-weight:600;margin-bottom:4px;display:block;}
+  .form-hint{font-size:12px;color:var(--muted-fg);margin-top:4px;line-height:1.5;}
+  kbd{display:inline-block;background:var(--muted);border:1px solid var(--border);border-radius:4px;padding:0 5px;font-size:10px;font-family:'Geist Mono',monospace;line-height:18px;color:var(--fg);font-weight:500;}
+
+  /* Alert */
+  .alert{border-radius:var(--radius);padding:12px 16px;font-size:13px;line-height:1.55;display:flex;align-items:flex-start;gap:10px;}
+  .alert-icon{font-size:15px;flex-shrink:0;margin-top:1px;}
+  .alert-info{background:var(--blue-50);border:1px solid var(--blue-200);color:var(--fg);}
+  .alert-success{background:var(--green-50);border:1px solid var(--green-200);color:var(--fg);}
+  .alert-warn{background:var(--amber-50);border:1px solid var(--yellow-200);color:var(--fg);}
+  .alert-error{background:var(--red-50);border:1px solid var(--red-200);color:var(--fg);}
+  .alert strong{font-weight:600;}
+  .alert ul{margin:6px 0 0;padding-left:16px;font-size:12px;line-height:1.8;}
+
+  /* Guide Accordion */
+  .guide-card{border:1px solid var(--blue-200);border-radius:var(--radius);background:var(--blue-50);margin-bottom:24px;overflow:hidden;}
+  .guide-header{display:flex;align-items:center;justify-content:space-between;width:100%;padding:16px 20px;background:none;border:none;cursor:pointer;text-align:left;font-family:inherit;transition:background 0.15s;}
+  .guide-header:hover{background:rgba(219,234,254,0.3);}
+  .guide-title{font-size:16px;font-weight:700;color:var(--fg);}
+  .guide-sub{font-size:12px;color:var(--blue-600);margin-top:2px;}
+  .guide-toggle{font-size:12px;color:var(--blue-600);border:1px solid var(--blue-200);border-radius:9999px;padding:4px 14px;background:var(--bg);font-weight:500;white-space:nowrap;font-family:inherit;}
+  .guide-body{padding:0 20px 12px;}
+
+  .acc-item{border-bottom:1px solid var(--blue-200);}
+  .acc-item:last-child{border-bottom:none;}
+  .acc-trig{display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px 0;background:none;border:none;font-size:13px;font-weight:600;font-family:inherit;color:var(--fg);cursor:pointer;text-align:left;}
+  .acc-trig:hover{opacity:0.8;}
+  .acc-trig .chev{font-size:14px;color:var(--muted-fg);transition:transform 0.2s;display:inline-block;}
+  .acc-trig.open .chev{transform:rotate(180deg);}
+  .acc-body{display:none;padding-bottom:16px;font-size:12px;color:#52525B;line-height:1.7;}
+  .acc-body.open{display:block;animation:fadeIn 0.15s ease;}
+  .acc-body p{margin:0 0 8px;}
+  .acc-body ul{margin:0;padding-left:16px;}
+  .acc-body ul li{margin-bottom:2px;}
+  .acc-body ol{margin:0;padding-left:20px;}
+
+  /* Schema type cards */
+  .type-card{border-radius:var(--radius);padding:12px 16px;margin-bottom:8px;background:var(--bg);}
+  .type-card.blue{border:1px solid var(--blue-200);}
+  .type-card.yellow{border:1px solid var(--yellow-200);}
+  .type-card.green{border:1px solid var(--green-200);}
+  .type-badge{font-size:12px;font-weight:600;padding:2px 10px;border-radius:4px;margin-right:8px;}
+  .type-badge.blue{background:var(--blue-100);color:var(--blue-800);}
+  .type-badge.yellow{background:var(--yellow-100);color:var(--yellow-800);}
+  .type-badge.green{background:var(--green-100);color:var(--green-700);}
+  .type-label{font-size:12px;color:var(--muted-fg);}
+  .type-field{display:flex;gap:8px;margin-top:6px;margin-left:8px;font-size:12px;color:#3F3F46;}
+  .type-field code{background:var(--muted);padding:1px 6px;border-radius:4px;font-weight:600;font-size:11px;font-family:'Geist Mono',monospace;flex-shrink:0;color:var(--fg);}
+
+  /* Tabs */
+  .tab-bar{display:flex;border-bottom:1px solid var(--border);background:var(--bg);}
+  .tab-btn{padding:12px 20px;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;color:var(--muted-fg);transition:all 0.15s;}
+  .tab-btn:hover{color:var(--fg);}
+  .tab-btn.active{border-bottom-color:var(--fg);color:var(--fg);font-weight:600;}
+  .tab-body{padding:24px;}
+  .tc{display:none;}.tc.active{display:block;}
+
+  /* Table */
+  .table-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+  .data-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .data-table thead{background:var(--muted);}
+  .data-table th{padding:10px 14px;text-align:left;font-weight:500;font-size:12px;color:var(--muted-fg);border-bottom:1px solid var(--border);white-space:nowrap;}
+  .data-table td{padding:10px 14px;border-bottom:1px solid var(--border);white-space:nowrap;}
+  .data-table tbody tr:last-child td{border-bottom:none;}
+  .data-table tbody tr{cursor:pointer;transition:background 0.1s;}
+  .data-table tbody tr:hover{background:var(--muted);}
+  .data-table tbody tr.sel{background:var(--blue-50);}
+  .data-table .mono{font-family:'Geist Mono',monospace;font-size:12px;color:var(--muted-fg);}
+  .data-table .trunc{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Geist Mono',monospace;font-size:11px;color:#A1A1AA;}
+
+  .radio{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;transition:border-color 0.15s;}
+  .radio.on{border-color:var(--fg);}
+  .radio-dot{width:8px;height:8px;border-radius:50%;background:var(--fg);}
+
+  /* Edit panel */
+  .edit-panel{border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);padding:20px 24px;margin-top:16px;}
+  .edit-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+  .edit-close{background:none;border:none;cursor:pointer;color:var(--muted-fg);font-size:18px;padding:2px 4px;transition:color 0.15s;font-family:inherit;}
+  .edit-close:hover{color:var(--fg);}
+  .edit-grid{display:flex;gap:24px;}
+  .edit-left{flex:1;display:flex;flex-direction:column;gap:16px;}
+  .edit-right{width:280px;flex-shrink:0;display:flex;flex-direction:column;gap:12px;}
+  .json-box{border:1px solid var(--border);border-radius:var(--radius);background:var(--muted);padding:12px 16px;}
+  .json-box pre{font-size:11px;font-family:'Geist Mono',monospace;color:#3F3F46;margin:0;white-space:pre-wrap;max-height:210px;overflow:auto;line-height:1.6;}
+  .btn-row{display:flex;gap:10px;}.btn-row .btn{flex:1;}
+
+  /* Preview */
+  .preview{border:1px solid var(--green-200);border-radius:var(--radius);background:var(--green-50);padding:12px 16px;margin-top:8px;}
+  .preview-label{font-size:12px;color:var(--green-700);font-weight:500;margin-bottom:4px;}
+  .preview-formula{font-size:14px;font-family:'Geist Mono',monospace;font-weight:600;color:var(--green-900);}
+
+  /* Template */
+  .tmpl-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:8px;}
+  .tmpl-search{padding:8px;border-bottom:1px solid var(--border);background:var(--muted);}
+  .tmpl-list{max-height:260px;overflow-y:auto;}
+  .tmpl-item{width:100%;text-align:left;padding:10px 16px;border:none;border-bottom:1px solid #F4F4F5;background:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-family:inherit;transition:background 0.1s;}
+  .tmpl-item:last-child{border-bottom:none;}
+  .tmpl-item:hover{background:var(--blue-50);}
+  .tmpl-item .tn{font-weight:500;color:var(--fg);}
+  .tmpl-item .tf{font-size:12px;color:var(--muted-fg);margin-left:8px;}
+  .tmpl-item .ta{font-size:12px;color:var(--blue-600);font-weight:500;opacity:0;transition:opacity 0.15s;}
+  .tmpl-item:hover .ta{opacity:1;}
+
+  /* Modal */
+  .overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:50;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);animation:fadeIn 0.12s ease;}
+  .modal{background:var(--bg);border-radius:12px;padding:24px;width:420px;box-shadow:0 20px 60px rgba(0,0,0,0.2);animation:fadeIn 0.15s ease;}
+  .modal h2{font-size:17px;font-weight:700;margin-bottom:4px;}
+  .modal .meta{font-size:12px;color:var(--muted-fg);margin-bottom:16px;font-family:'Geist Mono',monospace;}
+
+  .hid{display:none;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <h1 class="page-title">Calculated Metric Backoffice</h1>
+    <p class="page-desc">Actuals / Trends 리포트에서 사용할 커스텀 계산 메트릭을 생성·관리합니다.</p>
+  </div>
+
+  <!-- ═══ GUIDE ═══ -->
+  <div class="guide-card" id="guide">
+    <button class="guide-header" onclick="tgG()">
+      <div>
+        <div class="guide-title">📘 Calculated Metric 사용 가이드</div>
+        <div class="guide-sub">각 섹션을 클릭하여 펼치거나 접을 수 있습니다.</div>
+      </div>
+      <span class="guide-toggle" id="gtl">전체 접기 ▴</span>
+    </button>
+    <div class="guide-body" id="gb">
+
+      <!-- 1. 개요 -->
+      <div class="acc-item">
+        <button class="acc-trig open" onclick="tgA(this)"><span>Calculated Metric이란?</span><span class="chev">▾</span></button>
+        <div class="acc-body open">
+          <p>기존 Airbridge 메트릭을 사칙연산(+, -, *, /)으로 조합하여 만드는 <strong>커스텀 계산 메트릭</strong>입니다. 생성된 메트릭은 해당 조직의 <strong>Actuals / Trends 리포트</strong>에서 사용 가능하며, Marketer · Agency · Media Partner 등 <strong>모든 역할</strong>의 사용자가 접근할 수 있습니다.</p>
+        </div>
+      </div>
+
+      <!-- 2. 사용 방법 -->
+      <div class="acc-item">
+        <button class="acc-trig" onclick="tgA(this)"><span>🔧 사용 방법</span><span class="chev">▾</span></button>
+        <div class="acc-body">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;gap:8px;align-items:flex-start;"><span class="badge" style="flex-shrink:0;">생성 탭</span><span>조직 ID, 고유 Key, 표시 이름, 수식(JSON)을 입력하여 새 메트릭을 만듭니다.</span></div>
+            <div style="display:flex;gap:8px;align-items:flex-start;"><span class="badge" style="flex-shrink:0;">조회 탭</span><span>기존 메트릭을 검색하고, 행을 클릭하면 하단에 수정/삭제 UI가 나타납니다.</span></div>
+            <div style="display:flex;gap:8px;align-items:flex-start;"><span class="badge" style="flex-shrink:0;">템플릿</span><span>CPI · CPP · CTR 등 자주 쓰는 수식을 클릭 한 번으로 Expression 필드에 적용할 수 있습니다.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Schema 정의 -->
+      <div class="acc-item">
+        <button class="acc-trig open" onclick="tgA(this)"><span>📖 Schema 정의 방법</span><span class="chev">▾</span></button>
+        <div class="acc-body open">
+          <p>Expression은 <strong>Type을 정의하는 것</strong>으로 출발합니다. 아래 3가지 Type을 중첩하여 수식을 구성합니다.</p>
+
+          <div class="type-card blue">
+            <div style="margin-bottom:8px;"><span class="type-badge blue">arithmetic</span><span class="type-label">계산식</span></div>
+            <div style="font-size:12px;color:#52525B;margin-bottom:4px;">따라붙는 필드:</div>
+            <div class="type-field"><code>fn</code><span><strong>+, -, *, /</strong> 중 하나</span></div>
+            <div class="type-field"><code>fields</code><span>피연산자 목록. 피연산자로 재차 <span style="background:var(--blue-50);color:var(--blue-600);padding:0 4px;border-radius:3px;font-size:10px;">arithmetic</span>을 사용 가능 = <strong>사칙연산의 괄호</strong></span></div>
+          </div>
+
+          <div class="type-card yellow">
+            <div style="margin-bottom:8px;"><span class="type-badge yellow">constant</span><span class="type-label">상수</span></div>
+            <div style="font-size:12px;color:#52525B;margin-bottom:4px;">따라붙는 필드:</div>
+            <div class="type-field"><code>value</code><span>값. <strong>음수가 허용</strong>되는 정수 또는 소수</span></div>
+          </div>
+
+          <div class="type-card green">
+            <div style="margin-bottom:8px;"><span class="type-badge green">fieldAccess</span><span class="type-label">metric 사용</span></div>
+            <div style="font-size:12px;color:#52525B;margin-bottom:4px;">따라붙는 필드:</div>
+            <div class="type-field"><code>metric</code><span>사용할 metric key. <strong style="color:var(--destructive);">⚠ Calculated Metric은 사용 불가!</strong></span></div>
+          </div>
+
+          <div class="alert alert-info" style="margin-top:8px;">
+            <span class="alert-icon">🔍</span>
+            <div>
+              <strong>Metric Key 찾는 방법</strong>
+              <ol style="margin-top:4px;padding-left:16px;font-size:12px;">
+                <li><strong>Service Spec</strong> 시트에서 참조</li>
+                <li><strong>Actuals 리포트</strong>의 설정값 복사 기능 이용</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. 핵심 주의사항 -->
+      <div class="acc-item">
+        <button class="acc-trig" onclick="tgA(this)"><span>⚠️ 핵심 주의사항</span><span class="chev">▾</span></button>
+        <div class="acc-body">
+          <ul>
+            <li>고객사 적용 전 반드시 <strong>ablog (Org ID: 1872465354)</strong>에서 먼저 테스트</li>
+            <li>Key는 <strong>영어 소문자 + 언더스코어(_)만</strong> 사용 가능</li>
+            <li>수식 내에서 다른 Calculated Metric을 <strong>참조 불가</strong></li>
+            <li>삭제 시 Saved Report에서 <strong>자동 제거</strong> (동일 Key 재생성 시 복구 가능)</li>
+            <li>0.005 미만의 값은 리포트에서 <strong>0으로 표시</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 5. 참고 사항 -->
+      <div class="acc-item">
+        <button class="acc-trig" onclick="tgA(this)"><span>💡 참고 사항</span><span class="chev">▾</span></button>
+        <div class="acc-body">
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;gap:8px;align-items:flex-start;"><span class="badge" style="flex-shrink:0;margin-top:1px;background:var(--bg);border:1px solid var(--border);">수식 검증</span><span>수식 입력 후 <kbd>Ctrl</kbd> + <kbd>Enter</kbd> (Mac: <kbd>⌘</kbd> + <kbd>Enter</kbd>) 또는 포커스 해제 시 <strong>JSON 포맷 검증</strong>. 메트릭 유효성은 생성/수정 버튼 클릭 후 검증.</span></div>
+            <div style="display:flex;gap:8px;align-items:flex-start;"><span class="badge" style="flex-shrink:0;margin-top:1px;background:var(--bg);border:1px solid var(--border);">수정/삭제</span><span>조회 탭에서 <strong>메트릭 행을 클릭하여 선택</strong>하면 하단에 수정/삭제 UI가 나타납니다.</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ MAIN CARD ═══ -->
+  <div class="card">
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="swT('create',this)">➕ 생성</button>
+      <button class="tab-btn" onclick="swT('list',this)">📋 조회 · 수정 · 삭제</button>
+    </div>
+    <div class="tab-body">
+
+      <!-- CREATE TAB -->
+      <div class="tc active" id="tab-create">
+        <div class="form-group">
+          <label class="form-label">Organization ID</label>
+          <div class="form-hint" style="margin-top:0;margin-bottom:6px;">Calculated Metric을 생성할 조직의 ID입니다.</div>
+          <input type="text" class="input" id="c-org" placeholder="숫자로 입력 (예: 1872465354)">
+          <div class="form-hint">💡 테스트 시: <button class="btn-link" onclick="document.getElementById('c-org').value='1872465354'">ablog (1872465354) 자동 입력</button></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Key</label>
+          <div class="form-hint" style="margin-top:0;margin-bottom:6px;">조직 내 고유 식별값. 생성 후 변경이 어려우니 신중하게 입력하세요.</div>
+          <input type="text" class="input" id="c-key" placeholder="영어 소문자와 _ 만 (예: cr_install, cpi_app)" oninput="vKey(this)">
+          <div id="c-kf" class="form-hint">✅ <code style="background:var(--muted);padding:1px 5px;border-radius:3px;font-size:11px;font-family:'Geist Mono',monospace;">cost_per_install</code> &nbsp;❌ <code style="background:var(--red-50);color:var(--red-600);padding:1px 5px;border-radius:3px;font-size:11px;font-family:'Geist Mono',monospace;">Cost-Per-Install</code></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Display Name</label>
+          <div class="form-hint" style="margin-top:0;margin-bottom:6px;">리포트 메트릭 드롭다운에 표시됩니다. 고객에게 노출되므로 명확한 이름을 사용하세요.</div>
+          <input type="text" class="input" id="c-dn" placeholder="예: Cost Per Purchase - CPP (App)">
+          <div class="form-hint">리포트에서 메트릭 hover 시 수식 자동 표시.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Expression (수식)</label>
+          <div class="form-hint" style="margin-top:0;margin-bottom:8px;">JSON 형식 계산 수식. 직접 작성하거나 템플릿에서 적용하세요.</div>
+
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <button class="btn btn-outline btn-sm" id="tt" onclick="tgT()">📋 수식 템플릿 열기 ▾</button>
+            <span class="badge badge-green hid" id="ta"></span>
+          </div>
+
+          <div class="tmpl-wrap hid" id="twrap">
+            <div class="tmpl-search"><input type="text" class="input" id="tsrch" placeholder="템플릿 검색..." oninput="fT()" style="height:30px;font-size:12px;"></div>
+            <div class="tmpl-list" id="tlist"></div>
+          </div>
+
+          <textarea class="input" id="c-expr" rows="8" placeholder='{"fn":"/","type":"arithmetic","fields":[{"type":"fieldAccess","metric":"cost_channel"},{"type":"fieldAccess","metric":"app_installs"}]}' onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter')vE('c')" onblur="vE('c')"></textarea>
+          <div id="c-ef"></div>
+          <div id="c-eh" class="form-hint"><kbd>Ctrl</kbd>+<kbd>Enter</kbd> 또는 포커스 해제 시 JSON 검증. 메트릭 유효성은 생성 버튼 클릭 후 검증.</div>
+          <div id="c-pv" class="preview hid"><div class="preview-label">📐 수식 미리보기</div><div class="preview-formula" id="c-pvf"></div></div>
+        </div>
+
+        <button class="btn btn-blue btn-lg btn-full" style="margin-bottom:20px;">생성하기</button>
+
+        <div class="alert alert-warn">
+          <span class="alert-icon">⚠️</span>
+          <div>
+            <strong>생성 전 확인사항</strong>
+            <ul>
+              <li><strong>반드시 ablog에서 먼저 테스트.</strong> 고객사에 바로 적용 금지.</li>
+              <li>Key · Display Name 조직 내 <strong>중복 불가</strong></li>
+              <li>생성 후 Actuals 리포트에서 수식 확인 필수.</li>
+              <li>0.005 미만 → 리포트에서 0 표시</li>
+              <li>모든 역할(Marketer, Agency, Media Partner)에서 사용 가능</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIST TAB -->
+      <div class="tc" id="tab-list">
+        <div class="form-group">
+          <label class="form-label">Organization ID</label>
+          <div class="form-hint" style="margin-top:0;margin-bottom:6px;">조직 ID 입력 후 조회 버튼 클릭.</div>
+          <div style="display:flex;gap:10px;">
+            <input type="text" class="input" id="l-org" value="1872465354" style="flex:1;">
+            <button class="btn btn-default" onclick="ldL()">조회</button>
+          </div>
+        </div>
+
+        <div id="lr">
+          <div style="margin-bottom:12px;"><span class="badge badge-green" id="lc"></span></div>
+
+          <div style="display:flex;gap:10px;margin-bottom:16px;">
+            <input type="text" class="input" id="l-sq" placeholder="🔍 key, display name, 수식으로 검색..." oninput="fL()" style="flex:1;">
+            <select class="input" id="l-sf" onchange="fL()" style="width:130px;flex:none;">
+              <option value="all">전체</option>
+              <option value="key">Key</option>
+              <option value="dn">Display Name</option>
+            </select>
+          </div>
+
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th style="width:40px;">선택</th><th style="width:100px;">Key</th><th>Display Name</th><th>Expression</th><th style="width:90px;">Created</th></tr></thead>
+              <tbody id="ltb"></tbody>
+            </table>
+          </div>
+
+          <div class="alert alert-info" id="lh" style="margin-top:12px;">
+            <span class="alert-icon">👆</span>
+            <span>테이블에서 수정/삭제할 메트릭을 <strong>클릭하여 선택</strong>하면 아래에 수정/삭제 UI가 나타납니다.</span>
+          </div>
+
+          <!-- Edit Panel -->
+          <div class="edit-panel hid" id="epn">
+            <div class="edit-header">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:14px;font-weight:700;">✏️ 메트릭 수정 / 삭제</span>
+                <span class="badge badge-blue" id="eid"></span>
+              </div>
+              <button class="edit-close" onclick="dsel()">✕</button>
+            </div>
+            <div class="edit-grid">
+              <div class="edit-left">
+                <div>
+                  <label class="form-label" style="color:var(--muted-fg);font-weight:500;">Key (변경 불가)</label>
+                  <input type="text" class="input" id="e-key" disabled>
+                  <div class="form-hint">변경 필요 시 삭제 후 재생성.</div>
+                </div>
+                <div>
+                  <label class="form-label">Display Name</label>
+                  <input type="text" class="input" id="e-dn">
+                </div>
+                <div>
+                  <label class="form-label">Expression</label>
+                  <textarea class="input" id="e-expr" rows="5" onblur="vE('e')" onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter')vE('e')"></textarea>
+                  <div class="form-hint"><kbd>Ctrl</kbd>+<kbd>Enter</kbd> 또는 포커스 해제 시 JSON 검증. 메트릭 유효성은 Edit 클릭 후 검증.</div>
+                </div>
+                <div class="btn-row">
+                  <button class="btn btn-default">✏️ Edit</button>
+                  <button class="btn btn-destructive" onclick="sDM()">🗑 Delete</button>
+                </div>
+              </div>
+              <div class="edit-right">
+                <div class="preview" id="e-pv">
+                  <div class="preview-label">📐 수식 미리보기</div>
+                  <div class="preview-formula" id="e-pvf"></div>
+                </div>
+                <div class="json-box">
+                  <div style="font-size:12px;color:var(--muted-fg);font-weight:500;margin-bottom:8px;">파싱된 JSON</div>
+                  <pre id="e-js"></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="alert alert-warn" style="margin-top:16px;">
+              <span class="alert-icon">⚠️</span>
+              <div>
+                <strong>수정/삭제 전 확인사항</strong>
+                <ul>
+                  <li><strong>Org ID/Key 수정</strong> → 기존 사용자 접근 불가</li>
+                  <li><strong>삭제 후 같은 Display Name 재생성</strong> → Saved Report 사용 불가</li>
+                  <li><strong>같은 Key로 재생성</strong> → Saved Report 사용 가능</li>
+                  <li>삭제된 메트릭 Saved Report 포함 → 첫 진입 에러 후 자동 제거 → <strong>고객 사전 안내 필요</strong></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="overlay hid" id="dm">
+  <div class="modal">
+    <h2>🗑 메트릭 삭제</h2>
+    <div style="font-weight:600;font-size:14px;" id="d-nm"></div>
+    <div class="meta" id="d-mt"></div>
+    <div class="alert alert-error" style="margin-bottom:16px;">
+      <span class="alert-icon">🚨</span>
+      <div>
+        <strong>삭제하면 되돌릴 수 없습니다</strong>
+        <ul>
+          <li>Saved Report에서 자동 제거</li>
+          <li>동일 Display Name 재생성 시 복구 불가</li>
+          <li>동일 Key 재생성 시에만 기존 Report 사용 가능</li>
+        </ul>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-outline" style="flex:1;" onclick="hDM()">취소</button>
+      <button class="btn btn-destructive" style="flex:1;" onclick="hDM()">삭제 확인</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var D=[
+{id:1772,key:"cpp_app",dn:"Cost Per Purchase - CPP (App)",expr:'{"fn":"/","type":"arithmetic","fields":[{"type":"fieldAccess","metric":"cost_channel"},{"type":"fieldAccess","metric":"app_order_complete"}]}',dt:"2022-08-15"},
+{id:1789,key:"cpi",dn:"Cost Per Install",expr:'{"fn":"/","type":"arithmetic","fields":[{"type":"fieldAccess","metric":"cost_channel"},{"type":"fieldAccess","metric":"app_installs"}]}',dt:"2022-09-01"},
+{id:20782,key:"cpm_app",dn:"CPM (App)",expr:'{"fn":"*","type":"arithmetic","fields":[{"fn":"/","type":"arithmetic","fields":[{"type":"fieldAccess","metric":"cost_channel"},{"type":"fieldAccess","metric":"app_ad_impression"}]},{"type":"constant","value":1000}]}',dt:"2023-03-10"},
+{id:20783,key:"ecpm_app",dn:"eCPM (App)",expr:'{"fn":"*","type":"arithmetic","fields":[{"fn":"/","type":"arithmetic","fields":[{"type":"fieldAccess","metric":"app_ad_impression_revenue"},{"type":"fieldAccess","metric":"app_ad_impression"}]},{"type":"constant","value":1000}]}',dt:"2023-03-10"},
+{id:21718,key:"profit_pct",dn:"Profit %",expr:'{"fn":"*","type":"arithmetic","fields":[{"fn":"/","type":"arithmetic","fields":[{"type":"fieldAccess","metric":"cost_channel"},{"type":"fieldAccess","metric":"app_ad_revenue"}]},{"type":"constant","value":100}]}',dt:"2023-05-20"},
+{id:21719,key:"profit_loss",dn:"Profit/Loss (Revenue - Cost)",expr:'{"fn":"-","type":"arithmetic","fields":[{"type":"fieldAccess","metric":"app_ad_revenue"},{"type":"fieldAccess","metric":"cost_channel"}]}',dt:"2023-05-20"}
+];
+var TL=[
+{n:"CPI",f:"Cost / Install",e:'{"fn":"/","type":"arithmetic","fields":[{"type":"fieldAccess","metric":"cost_channel"},{"type":"fieldAccess","metric":"app_installs"}]}'},
+{n:"CPP (App)",f:"Cost / Order Complete",e:'{"fn":"/","type":"arithmetic","fields":[{"type":"fieldAccess","metric":"cost_channel"},{"type":"fieldAccess","metric":"app_order_complete"}]}'},
+{n:"CTR",f:"(Click / Impressions) × 100",e:'{"fn":"*","type":"arithmetic","fields":[{"fn":"/","type":"arithmetic","fields":[{"type":"fieldAccess","metric":"clicks"},{"type":"fieldAccess","metric":"impressions"}]},{"type":"constant","value":100}]}'},
+{n:"CPM (App)",f:"(Cost / Ad Imp) × 1000",e:'{"fn":"*","type":"arithmetic","fields":[{"fn":"/","type":"arithmetic","fields":[{"type":"fieldAccess","metric":"cost_channel"},{"type":"fieldAccess","metric":"app_ad_impression"}]},{"type":"constant","value":1000}]}'},
+{n:"ARPU (App)",f:"Revenue / Unique Users",e:'{"fn":"/","type":"arithmetic","fields":[{"type":"fieldAccess","metric":"app_revenue"},{"type":"fieldAccess","metric":"app_unique_users"}]}'},
+{n:"ARPPU (App)",f:"Revenue / Order Users",e:'{"fn":"/","type":"arithmetic","fields":[{"type":"fieldAccess","metric":"app_revenue"},{"type":"fieldAccess","metric":"app_order_complete_users"}]}'},
+{n:"ROI (App)",f:"Revenue / Cost",e:'{"fn":"/","type":"arithmetic","fields":[{"type":"fieldAccess","metric":"app_revenue"},{"type":"fieldAccess","metric":"cost_channel"}]}'},
+{n:"AOV (App)",f:"Revenue / Order Complete",e:'{"fn":"/","type":"arithmetic","fields":[{"type":"fieldAccess","metric":"app_revenue"},{"type":"fieldAccess","metric":"app_order_complete"}]}'},
+{n:"eCPM (App)",f:"(Ad Rev / Imp) × 1000",e:'{"fn":"*","type":"arithmetic","fields":[{"fn":"/","type":"arithmetic","fields":[{"type":"fieldAccess","metric":"app_ad_impression_revenue"},{"type":"fieldAccess","metric":"app_ad_impression"}]},{"type":"constant","value":1000}]}'},
+{n:"Click-to-Install",f:"(Installs / Clicks) × 100",e:'{"fn":"*","type":"arithmetic","fields":[{"fn":"/","type":"arithmetic","fields":[{"type":"fieldAccess","metric":"app_installs"},{"type":"fieldAccess","metric":"clicks"}]},{"type":"constant","value":100}]}'},
+{n:"Profit/Loss (App)",f:"Ad Revenue − Cost",e:'{"fn":"-","type":"arithmetic","fields":[{"type":"fieldAccess","metric":"app_ad_revenue"},{"type":"fieldAccess","metric":"cost_channel"}]}'},
+{n:"실 구매액 (App)",f:"Revenue − Refund",e:'{"fn":"-","type":"arithmetic","fields":[{"type":"fieldAccess","metric":"app_revenue"},{"type":"fieldAccess","metric":"app_refund_amount"}]}'}
+];
+
+var sel=null,tO=false;
+
+/* Guide */
+function tgG(){var b=document.getElementById('gb'),l=document.getElementById('gtl');if(b.style.display==='none'){b.style.display='';l.textContent='전체 접기 ▴';}else{b.style.display='none';l.textContent='전체 펼치기 ▾';}}
+function tgA(b){var d=b.nextElementSibling;var isOpen=d.classList.contains('open');if(isOpen){d.classList.remove('open');b.classList.remove('open');}else{d.classList.add('open');b.classList.add('open');}}
+
+/* Tabs */
+function swT(id,b){document.querySelectorAll('.tab-btn').forEach(function(x){x.classList.remove('active');});document.querySelectorAll('.tc').forEach(function(x){x.classList.remove('active');});b.classList.add('active');document.getElementById('tab-'+id).classList.add('active');if(id==='list')ldL();}
+
+/* Key validation */
+function vKey(i){var v=i.value,f=document.getElementById('c-kf');if(v&&!/^[a-z_]+$/.test(v)){i.classList.add('err');i.classList.remove('ok');f.innerHTML='<div class="alert alert-error" style="margin-top:6px;padding:8px 12px;font-size:12px;"><span class="alert-icon">❌</span><span>영어 소문자와 언더스코어(_)만 사용 가능합니다.</span></div>';}else{i.classList.remove('err');f.innerHTML='✅ <code style="background:var(--muted);padding:1px 5px;border-radius:3px;font-size:11px;font-family:\'Geist Mono\',monospace;">cost_per_install</code> &nbsp;❌ <code style="background:var(--red-50);color:var(--red-600);padding:1px 5px;border-radius:3px;font-size:11px;font-family:\'Geist Mono\',monospace;">Cost-Per-Install</code>';}}
+
+/* Expression parser */
+function pN(n){if(!n)return'';if(n.type==='constant')return String(n.value);if(n.type==='fieldAccess')return n.metric;if(n.type==='arithmetic'&&Array.isArray(n.fields)){return n.fields.map(function(f,i){var r=pN(f);return(i>0&&f.type==='arithmetic')?'('+r+')':r;}).join(' '+n.fn+' ');}return'?';}
+
+function vE(p){var ta=document.getElementById(p+'-expr'),v=ta.value.trim();if(!v){ta.classList.remove('ok','err');if(p==='c'){document.getElementById('c-ef').innerHTML='';document.getElementById('c-eh').classList.remove('hid');document.getElementById('c-pv').classList.add('hid');}return;}
+try{var o=JSON.parse(v);ta.classList.remove('err');ta.classList.add('ok');var fm=pN(o);if(p==='c'){document.getElementById('c-ef').innerHTML='<div class="alert alert-success" style="margin-top:6px;padding:8px 12px;font-size:12px;"><span class="alert-icon">✅</span><span>유효한 JSON 형식입니다</span></div>';document.getElementById('c-eh').classList.add('hid');if(fm){document.getElementById('c-pv').classList.remove('hid');document.getElementById('c-pvf').textContent=fm;}}else{if(fm){document.getElementById('e-pv').classList.remove('hid');document.getElementById('e-pvf').textContent=fm;}}}
+catch(e){ta.classList.remove('ok');ta.classList.add('err');if(p==='c'){document.getElementById('c-ef').innerHTML='<div class="alert alert-error" style="margin-top:6px;padding:8px 12px;font-size:12px;"><span class="alert-icon">❌</span><span>JSON 형식 오류. 중괄호, 쉼표, 따옴표를 확인하세요.</span></div>';document.getElementById('c-eh').classList.add('hid');document.getElementById('c-pv').classList.add('hid');}}}
+
+/* Templates */
+function tgT(){tO=!tO;var w=document.getElementById('twrap'),b=document.getElementById('tt');if(tO){w.classList.remove('hid');b.textContent='📋 수식 템플릿 닫기 ▴';b.className='btn btn-default btn-sm';rT(TL);}else{w.classList.add('hid');b.textContent='📋 수식 템플릿 열기 ▾';b.className='btn btn-outline btn-sm';}}
+function rT(l){var h='';for(var i=0;i<l.length;i++){h+='<button class="tmpl-item" onclick="aT('+i+')"><div><span class="tn">'+l[i].n+'</span><span class="tf">'+l[i].f+'</span></div><span class="ta">적용 →</span></button>';}if(!l.length)h='<div style="padding:16px;text-align:center;font-size:13px;color:var(--muted-fg);">검색 결과 없음</div>';document.getElementById('tlist').innerHTML=h;}
+function fT(){var q=document.getElementById('tsrch').value.toLowerCase();rT(TL.filter(function(t){return t.n.toLowerCase().indexOf(q)!==-1||t.f.toLowerCase().indexOf(q)!==-1;}));}
+function aT(i){var t=TL[i];try{var ta=document.getElementById('c-expr');ta.value=JSON.stringify(JSON.parse(t.e),null,2);ta.classList.remove('err');ta.classList.add('ok');vE('c');tgT();var bg=document.getElementById('ta');bg.textContent='✓ "'+t.n+'" 적용됨';bg.classList.remove('hid');}catch(e){}}
+
+/* List */
+function ldL(){fL();}
+function fL(){var q=(document.getElementById('l-sq').value||'').toLowerCase(),f=document.getElementById('l-sf').value;var r=D.filter(function(m){if(!q)return true;if(f==='key')return m.key.indexOf(q)!==-1;if(f==='dn')return m.dn.toLowerCase().indexOf(q)!==-1;return m.key.indexOf(q)!==-1||m.dn.toLowerCase().indexOf(q)!==-1||m.expr.indexOf(q)!==-1;});document.getElementById('lc').textContent='✓ '+r.length+'개 메트릭';var h='';for(var i=0;i<r.length;i++){var m=r[i],s=sel&&sel.id===m.id;h+='<tr class="'+(s?'sel':'')+'" onclick="sR('+m.id+')"><td><div class="radio '+(s?'on':'')+'">'+( s?'<div class="radio-dot"></div>':'')+'</div></td><td class="mono">'+m.key+'</td><td style="font-weight:500;">'+m.dn+'</td><td class="trunc">'+m.expr+'</td><td style="font-size:12px;color:var(--muted-fg);">'+m.dt+'</td></tr>';}document.getElementById('ltb').innerHTML=h;}
+
+function sR(id){sel=D.find(function(m){return m.id===id;});if(!sel)return;fL();document.getElementById('lh').classList.add('hid');document.getElementById('epn').classList.remove('hid');document.getElementById('eid').textContent='ID: '+sel.id;document.getElementById('e-key').value=sel.key;document.getElementById('e-dn').value=sel.dn;try{document.getElementById('e-expr').value=JSON.stringify(JSON.parse(sel.expr),null,2);}catch(e){document.getElementById('e-expr').value=sel.expr;}try{var o=JSON.parse(sel.expr),fm=pN(o);if(fm){document.getElementById('e-pv').classList.remove('hid');document.getElementById('e-pvf').textContent=fm;}document.getElementById('e-js').textContent=JSON.stringify(o,null,2);}catch(e){document.getElementById('e-js').textContent=sel.expr;}}
+function dsel(){sel=null;fL();document.getElementById('epn').classList.add('hid');document.getElementById('lh').classList.remove('hid');}
+
+/* Delete modal */
+function sDM(){if(!sel)return;document.getElementById('d-nm').textContent=sel.dn;document.getElementById('d-mt').textContent='key: '+sel.key+' · ID: '+sel.id;document.getElementById('dm').classList.remove('hid');}
+function hDM(){document.getElementById('dm').classList.add('hid');}
+
+ldL();
+</script>
+</body>
+</html>
