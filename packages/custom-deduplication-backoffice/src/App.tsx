@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/layout/PageHeader";
+import { HomeNav } from "@/components/layout/HomeNav";
 import { DeduplicationGuide } from "@/components/guide/DeduplicationGuide";
 import { AppSearchSection } from "@/components/dedup/AppSearchSection";
 import { CurrentSettingsTable } from "@/components/dedup/CurrentSettingsTable";
@@ -27,11 +28,9 @@ function App() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container py-8 max-w-4xl">
-        <PageHeader
-          title="Custom Deduplication Backoffice"
-          description="이벤트 커스텀 중복 제거 설정 관리"
-        />
+      <div className="max-w-[920px] mx-auto px-6 py-8 pb-20">
+        <HomeNav />
+        <PageHeader />
 
         <DeduplicationGuide />
 

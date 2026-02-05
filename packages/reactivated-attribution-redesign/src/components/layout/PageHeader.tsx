@@ -2,10 +2,10 @@ export function PageHeader() {
   return (
     <div className="mb-6">
       <h1 className="text-xl font-semibold tracking-tight">
-        Custom Deduplication Backoffice
+        Reactivated Attribution
       </h1>
       <p className="text-sm text-muted-foreground mt-1">
-        이벤트 커스텀 중복 제거 설정 관리
+        비활성 유저 재활성화 어트리뷰션 설정
       </p>
     </div>
   );

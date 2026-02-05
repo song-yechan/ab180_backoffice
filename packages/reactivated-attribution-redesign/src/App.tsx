@@ -1,5 +1,7 @@
 import { Toaster } from '@/components/ui/sonner';
-import { Header } from '@/components/layout/Header';
+import { HomeNav } from '@/components/layout/HomeNav';
+import { PageHeader } from '@/components/layout/PageHeader';
+import { AppInfoBar } from '@/components/layout/AppInfoBar';
 import { SettingsTab } from '@/components/settings/SettingsTab';
 import { useSettings } from '@/hooks/useSettings';
 import { mockAppInfo } from '@/data/mockData';
@@ -18,9 +20,11 @@ function App() {
   } = useSettings();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header appInfo={mockAppInfo} />
-      <main className="container mx-auto px-4 py-6">
+    <div className="min-h-screen bg-background">
+      <div className="max-w-[920px] mx-auto px-6 py-8 pb-20">
+        <HomeNav />
+        <PageHeader />
+        <AppInfoBar appInfo={mockAppInfo} />
         <SettingsTab
           settings={settings}
           onUpdateInactivityWindow={updateInactivityWindow}
@@ -32,8 +36,8 @@ function App() {
           onAddAttributionWindowChannel={addAttributionWindowChannel}
           onRemoveAttributionWindowChannel={removeAttributionWindowChannel}
         />
-      </main>
-      <Toaster position="top-right" />
+      </div>
+      <Toaster position="bottom-right" />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { Separator } from "@/components/ui/separator";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { HomeNav } from "@/components/layout/HomeNav";
 import { PermissionGuide } from "@/components/guide/PermissionGuide";
 import { AppSearchSection } from "@/components/permission/AppSearchSection";
 import { AgencySelector } from "@/components/permission/AgencySelector";
@@ -113,10 +114,10 @@ function App() {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-gray-50 flex flex-col">
-        <PageHeader />
-
-        <main className="flex-1 container mx-auto px-4 py-6 max-w-4xl">
+      <div className="min-h-screen bg-background">
+        <div className="max-w-[920px] mx-auto px-6 py-8 pb-20">
+          <HomeNav />
+          <PageHeader />
           <div className="space-y-6">
             {/* Guide Section */}
             <PermissionGuide />
@@ -166,19 +167,18 @@ function App() {
               />
             )}
           </div>
-        </main>
 
-        {/* Action Buttons */}
-        {isFormReady && (
-          <ActionButtons
-            hasChanges={permissionForm.hasChanges}
-            isSubmitting={permissionForm.isSubmitting}
-            onApply={handleApply}
-            onReset={handleReset}
-          />
-        )}
-
-        <Toaster position="top-right" />
+          {/* Action Buttons */}
+          {isFormReady && (
+            <ActionButtons
+              hasChanges={permissionForm.hasChanges}
+              isSubmitting={permissionForm.isSubmitting}
+              onApply={handleApply}
+              onReset={handleReset}
+            />
+          )}
+        </div>
+        <Toaster position="bottom-right" />
       </div>
     </TooltipProvider>
   );

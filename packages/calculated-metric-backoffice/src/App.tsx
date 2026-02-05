@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { HomeNav } from '@/components/layout/HomeNav';
 import { GuideAccordion } from '@/components/guide/GuideAccordion';
 import { CreateTab } from '@/components/form/CreateTab';
 import { ListTab } from '@/components/list/ListTab';
@@ -11,6 +12,7 @@ function App() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-[920px] mx-auto px-6 py-8 pb-20">
+        <HomeNav />
         <PageHeader />
         <Separator className="my-6" />
         <GuideAccordion />
