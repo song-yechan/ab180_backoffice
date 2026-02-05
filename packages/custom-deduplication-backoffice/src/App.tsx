@@ -13,6 +13,7 @@ function App() {
   const {
     appInfo,
     currentSettings,
+    dedupLogs,
     formState,
     isApplying,
     isFormValid,
@@ -49,6 +50,7 @@ function App() {
               {/* 현재 설정 */}
               <CurrentSettingsTable
                 settings={currentSettings}
+                logs={dedupLogs}
                 onDelete={handleDeleteSetting}
               />
 

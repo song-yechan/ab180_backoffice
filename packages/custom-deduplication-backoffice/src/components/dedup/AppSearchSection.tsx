@@ -101,18 +101,6 @@ export function AppSearchSection({
                   <span className="text-muted-foreground">총 설정:</span>
                   <Badge variant="secondary">{currentSettings.length}개</Badge>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-muted-foreground">활성화:</span>
-                  <Badge variant="default">
-                    {currentSettings.filter((s) => s.status === "ON").length}개
-                  </Badge>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-muted-foreground">비활성화:</span>
-                  <Badge variant="outline">
-                    {currentSettings.filter((s) => s.status === "OFF").length}개
-                  </Badge>
-                </div>
               </div>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import type { AppInfo, DedupSetting, EventType } from "@/types";
+import type { AppInfo, DedupSetting, DedupLog, EventType } from "@/types";
 
 // 이벤트 타입 옵션
 export const EVENT_TYPES: EventType[] = [
@@ -60,3 +60,21 @@ export const MOCK_DEDUP_SETTINGS: DedupSetting[] = [
 
 // 기본 Dedup Window (24시간 = 86400초)
 export const DEFAULT_DEDUP_WINDOW = 86400;
+
+// 목업 중복 제거 로그
+export const MOCK_DEDUP_LOGS: DedupLog[] = [
+  {
+    id: "log1",
+    appId: "12345",
+    dedupKey: "9360$$airbridge.user.signup$${{ data.eventData.goal.semanticAttributes.externalUserIDHashed | assert_not_empty }}",
+    duplicateCount: 1523,
+    timestamp: "2024-01-15T14:32:00.000",
+  },
+  {
+    id: "log2",
+    appId: "12345",
+    dedupKey: "airbridge.ecommerce.order.completed$${{ data.eventData.goal.semanticAttributes.transactionID | assert_not_empty }}",
+    duplicateCount: 892,
+    timestamp: "2024-01-14T09:15:00.000",
+  },
+];
