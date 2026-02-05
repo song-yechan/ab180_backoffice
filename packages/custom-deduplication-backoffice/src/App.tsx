@@ -39,6 +39,7 @@ function App() {
           {/* App 검색 */}
           <AppSearchSection
             appInfo={appInfo}
+            currentSettings={currentSettings}
             onAppChange={handleAppChange}
             onRefresh={handleRefresh}
           />
@@ -65,6 +66,7 @@ function App() {
                 />
 
                 <PreviewSection
+                  appId={appInfo.id}
                   platforms={formState.platforms}
                   eventType={formState.eventType}
                   dedupWindow={formState.dedupWindow}

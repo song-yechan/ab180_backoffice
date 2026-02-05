@@ -55,7 +55,10 @@ export function CurrentSettingsTable({
               <TableHead>Event Category</TableHead>
               <TableHead>Goal Category</TableHead>
               <TableHead>Dedup Key</TableHead>
-              <TableHead>Window</TableHead>
+              <TableHead>Dedup Window (sec)</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Created At</TableHead>
+              <TableHead>Updated At</TableHead>
               {onDelete && <TableHead className="w-[60px]"></TableHead>}
             </TableRow>
           </TableHeader>
@@ -83,8 +86,19 @@ export function CurrentSettingsTable({
                 </TableCell>
                 <TableCell>
                   <Badge variant="outline">
-                    {formatDuration(setting.dedupWindow)}
+                    {setting.dedupWindow} ({formatDuration(setting.dedupWindow)})
                   </Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge variant={setting.status === "ON" ? "default" : "secondary"}>
+                    {setting.status}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-xs text-muted-foreground">
+                  {new Date(setting.createdAt).toLocaleString("ko-KR")}
+                </TableCell>
+                <TableCell className="text-xs text-muted-foreground">
+                  {new Date(setting.updatedAt).toLocaleString("ko-KR")}
                 </TableCell>
                 {onDelete && (
                   <TableCell>

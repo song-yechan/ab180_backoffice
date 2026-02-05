@@ -115,16 +115,26 @@ export function DeduplicationGuide() {
               <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
                 <li>
                   백오피스에서 지원하지 않는 커스텀 이벤트는{" "}
-                  <code className="bg-muted px-1.5 py-0.5 rounded text-xs">
+                  <a
+                    href="https://teamab180.slack.com/archives/CU20C69NF"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-muted px-1.5 py-0.5 rounded text-xs hover:underline text-foreground"
+                  >
                     #csm-x-backend-req
-                  </code>
+                  </a>
                   에 요청
                 </li>
                 <li>
                   문제 발생 시{" "}
-                  <code className="bg-muted px-1.5 py-0.5 rounded text-xs">
+                  <a
+                    href="https://teamab180.slack.com/archives/C9B1D5N7N"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-muted px-1.5 py-0.5 rounded text-xs hover:underline text-foreground"
+                  >
                     #all-backend
-                  </code>
+                  </a>
                   에{" "}
                   <code className="bg-muted px-1.5 py-0.5 rounded text-xs">
                     !worker-support

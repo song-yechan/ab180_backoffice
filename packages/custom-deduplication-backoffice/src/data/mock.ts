@@ -41,6 +41,9 @@ export const MOCK_DEDUP_SETTINGS: DedupSetting[] = [
     goalCategory: "airbridge.user.signup",
     dedupKey: "9360$$airbridge.user.signup$${{ data.eventData.goal.semanticAttributes.externalUserIDHashed | assert_not_empty }}",
     dedupWindow: 86400,
+    status: "ON",
+    createdAt: "2023-11-29T11:21:59.000",
+    updatedAt: "2023-11-29T11:21:59.000",
   },
   {
     id: "2",
@@ -49,6 +52,9 @@ export const MOCK_DEDUP_SETTINGS: DedupSetting[] = [
     goalCategory: "airbridge.ecommerce.order.completed",
     dedupKey: "airbridge.ecommerce.order.completed$${{ data.eventData.goal.semanticAttributes.transactionID | assert_not_empty }}",
     dedupWindow: 86400,
+    status: "ON",
+    createdAt: "2023-11-29T11:21:59.000",
+    updatedAt: "2023-11-29T11:21:59.000",
   },
 ];
 

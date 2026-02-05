@@ -16,6 +16,9 @@ export interface DedupSetting {
   goalCategory: string;    // airbridge.user.signup
   dedupKey: string;        // Liquid 템플릿
   dedupWindow: number;     // seconds (기본 86400)
+  status: 'ON' | 'OFF';    // 활성화 상태
+  createdAt: string;       // ISO 날짜 문자열
+  updatedAt: string;       // ISO 날짜 문자열
 }
 
 // App Info

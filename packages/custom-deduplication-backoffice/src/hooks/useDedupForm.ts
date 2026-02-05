@@ -84,6 +84,7 @@ export function useDedupForm() {
     setTimeout(() => {
       const dedupKey = generateDedupKey(formState.platforms, formState.eventType!);
 
+      const now = new Date().toISOString();
       const newSetting: DedupSetting = {
         id: Date.now().toString(),
         appId: appInfo.id,
@@ -94,6 +95,9 @@ export function useDedupForm() {
         goalCategory: formState.eventType!.value,
         dedupKey,
         dedupWindow: formState.dedupWindow,
+        status: "ON",
+        createdAt: now,
+        updatedAt: now,
       };
 
       setCurrentSettings((prev) => [...prev, newSetting]);
