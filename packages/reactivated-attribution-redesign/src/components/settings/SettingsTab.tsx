@@ -6,6 +6,7 @@ import { AttributionWindow } from './AttributionWindow';
 interface SettingsTabProps {
   settings: ReactivatedAttributionSettings;
   onUpdateInactivityWindow: (period: WindowPeriod) => void;
+  onDisableInactivityWindow: () => void;
   onUpdateLookbackWindow: (
     eventType: LookbackEventType,
     channelIndex: number,
@@ -25,6 +26,7 @@ interface SettingsTabProps {
 export function SettingsTab({
   settings,
   onUpdateInactivityWindow,
+  onDisableInactivityWindow,
   onUpdateLookbackWindow,
   onAddLookbackWindowChannel,
   onRemoveLookbackWindowChannel,
@@ -37,6 +39,7 @@ export function SettingsTab({
       <InactivityWindow
         value={settings.inactivityWindow}
         onSave={onUpdateInactivityWindow}
+        onDisable={onDisableInactivityWindow}
       />
 
       <LookbackWindow

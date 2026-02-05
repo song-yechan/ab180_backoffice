@@ -1,4 +1,4 @@
-export type TimeUnit = 'days' | 'hours';
+export type TimeUnit = 'minutes' | 'hours' | 'days' | 'months' | 'years';
 
 export interface WindowPeriod {
   value: number;

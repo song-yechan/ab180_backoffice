@@ -19,6 +19,13 @@ export function useSettings() {
     }));
   }, []);
 
+  const disableInactivityWindow = useCallback(() => {
+    setSettings((prev) => ({
+      ...prev,
+      inactivityWindow: null,
+    }));
+  }, []);
+
   const updateLookbackWindow = useCallback(
     (
       eventType: LookbackEventType,
@@ -120,6 +127,7 @@ export function useSettings() {
   return {
     settings,
     updateInactivityWindow,
+    disableInactivityWindow,
     updateLookbackWindow,
     addLookbackWindowChannel,
     removeLookbackWindowChannel,

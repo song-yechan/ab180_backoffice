@@ -90,11 +90,9 @@ export const availableChannels = [
 ];
 
 export function formatPeriod(period: WindowPeriod): string {
-  const unitLabel = period.unit === 'days' ? '일' : '시간';
-  return `${period.value}${unitLabel}`;
+  return `${period.value} ${period.unit}`;
 }
 
 export function formatPeriodShort(period: WindowPeriod): string {
-  const unitLabel = period.unit === 'days' ? 'd' : 'h';
-  return `${period.value}${unitLabel}`;
+  return `${period.value} ${period.unit}`;
 }

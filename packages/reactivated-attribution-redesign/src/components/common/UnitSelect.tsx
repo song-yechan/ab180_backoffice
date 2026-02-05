@@ -20,8 +20,11 @@ export function UnitSelect({ value, onChange, disabled }: UnitSelectProps) {
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="days">일</SelectItem>
-        <SelectItem value="hours">시간</SelectItem>
+        <SelectItem value="minutes">minutes</SelectItem>
+        <SelectItem value="hours">hours</SelectItem>
+        <SelectItem value="days">days</SelectItem>
+        <SelectItem value="months">months</SelectItem>
+        <SelectItem value="years">years</SelectItem>
       </SelectContent>
     </Select>
   );

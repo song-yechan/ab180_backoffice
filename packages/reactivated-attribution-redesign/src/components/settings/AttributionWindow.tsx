@@ -45,16 +45,16 @@ export function AttributionWindow({
         <Tabs defaultValue="reactivatedInstall" className="w-full">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="reactivatedInstall" className="text-xs">
-              Install
+              Reactivated Install
             </TabsTrigger>
             <TabsTrigger value="reactivatedOpen" className="text-xs">
-              Open
+              Reactivated Open
             </TabsTrigger>
             <TabsTrigger value="reactivatedDeeplinkOpen" className="text-xs">
-              Deeplink Open
+              Reactivated Deeplink Open
             </TabsTrigger>
             <TabsTrigger value="reactivatedDeeplinkPageview" className="text-xs">
-              Deeplink Pageview
+              Reactivated Deeplink Pageview
             </TabsTrigger>
           </TabsList>
           <TabsContent value="reactivatedInstall" className="mt-4">

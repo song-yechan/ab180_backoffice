@@ -3,17 +3,25 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { UnitSelect } from '@/components/common/UnitSelect';
 import { InfoTooltip } from '@/components/common/InfoTooltip';
+import { formatPeriod } from '@/data/mockData';
 import type { WindowPeriod, TimeUnit } from '@/types';
 import { toast } from 'sonner';
 
 interface InactivityWindowProps {
   value: WindowPeriod | null;
   onSave: (period: WindowPeriod) => void;
+  onDisable: () => void;
 }
 
-export function InactivityWindow({ value, onSave }: InactivityWindowProps) {
+export function InactivityWindow({ value, onSave, onDisable }: InactivityWindowProps) {
   const [localValue, setLocalValue] = useState<number>(value?.value ?? 7);
   const [localUnit, setLocalUnit] = useState<TimeUnit>(value?.unit ?? 'days');
   const [isDirty, setIsDirty] = useState(false);
@@ -35,6 +43,11 @@ export function InactivityWindow({ value, onSave }: InactivityWindowProps) {
     onSave({ value: localValue, unit: localUnit });
     setIsDirty(false);
     toast.success('Inactivity Window가 저장되었습니다.');
+  };
+
+  const handleDisable = () => {
+    onDisable();
+    toast.success('Inactivity Window가 비활성화되었습니다.');
   };
 
   return (
@@ -63,29 +76,78 @@ export function InactivityWindow({ value, onSave }: InactivityWindowProps) {
           </Alert>
         )}
 
-        <div className="flex items-center gap-3">
-          <Input
-            type="number"
-            min={1}
-            value={localValue}
-            onChange={(e) => handleValueChange(e.target.value)}
-            className="w-24"
-          />
-          <UnitSelect value={localUnit} onChange={handleUnitChange} />
-          <Button onClick={handleSave} disabled={!isDirty}>
-            저장
-          </Button>
-          {isDirty && (
-            <span className="text-sm text-muted-foreground">변경사항이 있습니다</span>
-          )}
-        </div>
+        <Accordion type="multiple" defaultValue={value ? ['current', 'edit'] : ['edit']} className="w-full">
+          {/* 현재 세팅 */}
+          <AccordionItem value="current">
+            <AccordionTrigger className="text-sm font-medium">
+              <span className="flex items-center gap-2">
+                🔍 현재 세팅
+              </span>
+            </AccordionTrigger>
+            <AccordionContent>
+              {value ? (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between rounded-md border p-3">
+                    <div>
+                      <span className="text-sm text-muted-foreground">현재 설정값:</span>
+                      <span className="ml-2 font-medium">{formatPeriod(value)}</span>
+                    </div>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={handleDisable}
+                    >
+                      비활성화
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    비활성화 시 Reactivation Tracking이 동작하지 않습니다.
+                  </p>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  현재 설정된 Inactivity Window가 없습니다.
+                </p>
+              )}
+            </AccordionContent>
+          </AccordionItem>
 
-        <div className="mt-4 rounded-md bg-muted p-3 text-sm">
-          <p className="font-medium">기본값 안내</p>
-          <p className="text-muted-foreground">
-            일반적으로 7일을 권장합니다. 앱 특성에 따라 조정하세요.
-          </p>
-        </div>
+          {/* 세팅 추가/변경 */}
+          <AccordionItem value="edit">
+            <AccordionTrigger className="text-sm font-medium">
+              <span className="flex items-center gap-2">
+                🔧 세팅 {value ? '변경' : '추가'}
+              </span>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Input
+                    type="number"
+                    min={1}
+                    value={localValue}
+                    onChange={(e) => handleValueChange(e.target.value)}
+                    className="w-24"
+                  />
+                  <UnitSelect value={localUnit} onChange={handleUnitChange} />
+                  <Button onClick={handleSave} disabled={!isDirty && value !== null}>
+                    {value ? '변경' : '저장'}
+                  </Button>
+                  {isDirty && (
+                    <span className="text-sm text-muted-foreground">변경사항이 있습니다</span>
+                  )}
+                </div>
+
+                <div className="rounded-md bg-muted p-3 text-sm">
+                  <p className="font-medium">기본값 안내</p>
+                  <p className="text-muted-foreground">
+                    일반적으로 7일을 권장합니다. 앱 특성에 따라 조정하세요.
+                  </p>
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </CardContent>
     </Card>
   );
