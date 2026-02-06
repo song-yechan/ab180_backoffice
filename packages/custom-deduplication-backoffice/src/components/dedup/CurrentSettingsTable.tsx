@@ -151,9 +151,9 @@ export function CurrentSettingsTable({
                 <span className="text-muted-foreground">Goal Category:</span>{" "}
                 <code className="text-xs">{deleteTarget.goalCategory}</code>
               </div>
-              <div className="overflow-x-auto">
-                <span className="text-muted-foreground">Dedup Key:</span>{" "}
-                <code className="text-xs whitespace-nowrap">{deleteTarget.dedupKey}</code>
+              <div>
+                <span className="text-muted-foreground">Dedup Key:</span>
+                <code className="block text-xs break-all mt-1">{deleteTarget.dedupKey}</code>
               </div>
             </div>
           )}
